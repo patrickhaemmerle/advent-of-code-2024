@@ -3,16 +3,25 @@ import java.io.File
 abstract class AbstractDailyPuzzle {
 
     fun run() {
-        println("Runnin AoC for ${this.javaClass.name}")
-        println("-".repeat(80))
-
         val inputDir = File("input")
 
-        val input1 = File("${inputDir.path}/input1.txt")
-        val input2 = File("${inputDir.path}/input2.txt")
+        println("-".repeat(80))
+        println("Running AoC with test input for ${this.javaClass.name}")
+        println("-".repeat(80))
 
-        println("Solution to part1 is: ${part1(input1.readLines())}")
-        println("Solution to part2 is: ${part2(input2.readLines())}")
+        val testInput1 = File("${inputDir.path}/testinput1.txt")
+        val testInput2 = File("${inputDir.path}/testinput2.txt")
+        println("Solution to part1 is: ${part1(testInput1.readLines())}")
+        println("Solution to part2 is: ${part2(testInput2.readLines())}")
+
+        println("-".repeat(80))
+        println("Running AoC for ${this.javaClass.name}")
+        println("-".repeat(80))
+
+        val input = File("${inputDir.path}/input.txt")
+        println("Solution to part1 is: ${part1(input.readLines())}")
+        println("Solution to part2 is: ${part2(input.readLines())}")
+
         println("-".repeat(80))
     }
 
