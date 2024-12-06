@@ -3,6 +3,24 @@ fun main() = Day6().run()
 class Day6 : AbstractDailyPuzzle() {
 
     override fun part1(input: List<String>): String {
+        val visitedPositions = findVisitedPositions(input)
+        return visitedPositions.size.toString()
+    }
+
+    override fun part2(input: List<String>): String {
+        val visitedPositions = findVisitedPositions(input)
+        var count = 0
+        for (pos in visitedPositions) {
+            val map = readInput(input)
+            if (map[pos.i][pos.j] != '^') {
+                map[pos.i][pos.j] = '#'
+                if (hasLoop(map)) count++
+            }
+        }
+        return count.toString()
+    }
+
+    private fun findVisitedPositions(input: List<String>): MutableSet<Position> {
         val map = readInput(input)
         var currentPosition = findStartingPosition(map)
         var currentDirection = Direction.NORTH
@@ -16,21 +34,7 @@ class Day6 : AbstractDailyPuzzle() {
                 currentDirection = turn(currentDirection)
             }
         }
-        return visitedPositions.size.toString()
-    }
-
-    override fun part2(input: List<String>): String {
-        var count = 0
-        for (i in input.indices) {
-            for (j in input.first().indices) {
-                val map = readInput(input)
-                if (map[i][j] != '^') {
-                    map[i][j] = '#'
-                    if (hasLoop(map)) count++
-                }
-            }
-        }
-        return count.toString()
+        return visitedPositions
     }
 
     private fun hasLoop(map: List<CharArray>): Boolean {
