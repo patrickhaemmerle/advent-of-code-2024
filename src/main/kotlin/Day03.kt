@@ -1,6 +1,6 @@
-fun main() = Day3().run()
+fun main() = Day03().run()
 
-class Day3 : AbstractDailyPuzzle() {
+class Day03 : AbstractDailyPuzzle() {
 
     override fun part1(input: List<String>): String {
         val result = input.map { str ->

@@ -1,6 +1,6 @@
-fun main() = Day6().run()
+fun main() = Day06().run()
 
-class Day6 : AbstractDailyPuzzle() {
+class Day06 : AbstractDailyPuzzle() {
 
     override fun part1(input: List<String>): String {
         val visitedPositions = findPath(input).map { it.first }.toSet()

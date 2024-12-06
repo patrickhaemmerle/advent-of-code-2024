@@ -1,6 +1,6 @@
-fun main() = Day4().run()
+fun main() = Day04().run()
 
-class Day4 : AbstractDailyPuzzle() {
+class Day04 : AbstractDailyPuzzle() {
 
     override fun part1(input: List<String>): String {
         val puzzle = readInput(input)

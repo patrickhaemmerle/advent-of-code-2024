@@ -1,8 +1,8 @@
 import kotlin.math.absoluteValue
 
-fun main() = Day2().run()
+fun main() = Day02().run()
 
-class Day2 : AbstractDailyPuzzle() {
+class Day02 : AbstractDailyPuzzle() {
 
     override fun part1(input: List<String>): String {
         val result = input.map { readInput(it) }
