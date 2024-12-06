@@ -3,32 +3,42 @@ fun main() = Day6().run()
 class Day6 : AbstractDailyPuzzle() {
 
     override fun part1(input: List<String>): String {
-        val visitedPositions = findVisitedPositions(input)
+        val visitedPositions = findPath(input).map { it.first }.toSet()
         return visitedPositions.size.toString()
     }
 
     override fun part2(input: List<String>): String {
-        val visitedPositions = findVisitedPositions(input)
+        val undistractedPath = findPath(input)
+        val alreadySeenPositionAndDirection = mutableSetOf<Pair<Position, Direction>>()
+        val alreadySeenPosition = mutableSetOf<Position>()
         var count = 0
-        for (pos in visitedPositions) {
+        undistractedPath.zipWithNext { current, next ->
             val map = readInput(input)
-            if (map[pos.i][pos.j] != '^') {
-                map[pos.i][pos.j] = '#'
-                if (hasLoop(map)) count++
+            if (map[next.first.i][next.first.j] != '^') {
+                map[next.first.i][next.first.j] = '#'
+                if (!alreadySeenPosition.contains(next.first) && hasLoop(
+                        map,
+                        current.first,
+                        current.second,
+                        alreadySeenPositionAndDirection,
+                    )
+                ) count++
+                alreadySeenPositionAndDirection.add(current)
+                alreadySeenPosition.add(current.first)
             }
         }
         return count.toString()
     }
 
-    private fun findVisitedPositions(input: List<String>): MutableSet<Position> {
+    private fun findPath(input: List<String>): List<Pair<Position, Direction>> {
         val map = readInput(input)
         var currentPosition = findStartingPosition(map)
         var currentDirection = Direction.NORTH
-        val visitedPositions = mutableSetOf<Position>()
+        val visitedPositions = mutableListOf<Pair<Position, Direction>>()
         while (currentPosition.i >= 0 && currentPosition.i < map.size && currentPosition.j >= 0 && currentPosition.j < map.first().size) {
             val nextPosition = Position(currentPosition.i + currentDirection.i, currentPosition.j + currentDirection.j)
             if (map.getOrNull(nextPosition.i)?.getOrNull(nextPosition.j) != '#') {
-                visitedPositions.add(currentPosition)
+                visitedPositions.add(Pair(currentPosition, currentDirection))
                 currentPosition = nextPosition
             } else {
                 currentDirection = turn(currentDirection)
@@ -37,10 +47,15 @@ class Day6 : AbstractDailyPuzzle() {
         return visitedPositions
     }
 
-    private fun hasLoop(map: List<CharArray>): Boolean {
-        var currentPosition = findStartingPosition(map)
-        var currentDirection = Direction.NORTH
-        val visitedPositions = mutableSetOf<Pair<Position, Direction>>()
+    private fun hasLoop(
+        map: List<CharArray>,
+        startingPosition: Position,
+        startingDirection: Direction,
+        alreadySeenPositionAndDirection: Set<Pair<Position, Direction>>,
+    ): Boolean {
+        var currentPosition = startingPosition
+        var currentDirection = startingDirection
+        val visitedPositions = alreadySeenPositionAndDirection.toMutableSet()
         while (currentPosition.i >= 0 && currentPosition.i < map.size && currentPosition.j >= 0 && currentPosition.j < map.first().size) {
             val nextPosition = Position(currentPosition.i + currentDirection.i, currentPosition.j + currentDirection.j)
             if (map.getOrNull(nextPosition.i)?.getOrNull(nextPosition.j) != '#') {
