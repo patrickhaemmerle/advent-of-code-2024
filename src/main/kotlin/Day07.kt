@@ -6,11 +6,7 @@ class Day07 : AbstractDailyPuzzle() {
         val equations = readInput(input)
         val possibleOperators = listOf("*", "+")
         val result = equations.sumOf { equation ->
-            if (isEquationSolvable(equation, possibleOperators)) {
-                equation.result
-            } else {
-                0L
-            }
+            solveEquationIterative(equation, possibleOperators)
         }
         return result.toString()
     }
@@ -19,11 +15,7 @@ class Day07 : AbstractDailyPuzzle() {
         val equations = readInput(input)
         val possibleOperators = listOf("*", "+", "||")
         val result = equations.sumOf { equation ->
-            if (isEquationSolvable(equation, possibleOperators)) {
-                equation.result
-            } else {
-                0L
-            }
+            solveEquationIterative(equation, possibleOperators)
         }
         return result.toString()
     }
@@ -35,34 +27,45 @@ class Day07 : AbstractDailyPuzzle() {
         )
     }
 
-    private fun isEquationSolvable(equation: Equation, possibleOperators: List<String>): Boolean {
-        val numberOfOperators = equation.operands.size - 1
-        val possibleOperatorCombinations = findPossibleCombinations(possibleOperators, numberOfOperators)
-        for (i in possibleOperatorCombinations.indices) {
-            var result = equation.operands.first()
-            for (j in possibleOperatorCombinations[i].indices) {
-                when (possibleOperatorCombinations[i][j]) {
-                    "*" -> result *= equation.operands[j + 1]
-                    "+" -> result += equation.operands[j + 1]
-                    "||" -> result = ("${result}${equation.operands[j + 1]}").toLong()
-                }
-                if (result > equation.result) break
-            }
-            if (result == equation.result) return true
-        }
-        return false
-    }
+    private fun solveEquationIterative(equation: Equation, possibleOperators: List<String>): Long {
+        val processList = ArrayDeque<IntermediateResult>()
+        processList.addLast(
+            IntermediateResult(
+                equation.operands.first(),
+                equation.operands.subList(1, equation.operands.size),
+            )
+        )
 
-    private fun findPossibleCombinations(possibleOperators: List<String>, remainingSlots: Int): List<List<String>> {
-        if (remainingSlots == 1) return possibleOperators.map { listOf(it) }
-        val possibleRemainingCombinations = findPossibleCombinations(possibleOperators, remainingSlots - 1)
-        val res = possibleOperators.flatMap { operator -> possibleRemainingCombinations.map { listOf(operator) + it } }
-        return res
+        while (processList.isNotEmpty()) {
+            val current = processList.removeFirst()
+            possibleOperators.forEach { operator ->
+                val nextResult = when (operator) {
+                    "*" -> current.result * current.remainingOperands.first()
+                    "||" -> ("${current.result}${current.remainingOperands.first()}").toLong()
+                    "+" -> current.result + current.remainingOperands.first()
+                    else -> error("Unknown  Operator")
+                }
+
+                val remainingOperands = current.remainingOperands.subList(1, current.remainingOperands.size)
+
+                if (nextResult == equation.targetResult && remainingOperands.isEmpty()) return nextResult
+
+                if (nextResult <= equation.targetResult && remainingOperands.isNotEmpty()) {
+                    processList.addLast(IntermediateResult(nextResult, remainingOperands))
+                }
+            }
+        }
+        return 0L
     }
 
     private data class Equation(
-        val result: Long,
+        val targetResult: Long,
         val operands: List<Long>
+    )
+
+    private data class IntermediateResult(
+        val result: Long,
+        val remainingOperands: List<Long>,
     )
 
 }
