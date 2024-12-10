@@ -3,19 +3,9 @@ fun main() = Day09().run()
 class Day09 : AbstractDailyPuzzle() {
 
     override fun part1(input: List<String>): String {
-        val diskMap = input.first().toCharArray()
-        val decompressedDisk = ArrayDeque<DiskSlot>()
-
-        diskMap.forEachIndexed() { i, value ->
-            if (i % 2 == 0) {
-                decompressedDisk.addLast(File(value.digitToInt(), i / 2))
-            } else {
-                decompressedDisk.addLast(EmptySpace(value.digitToInt()))
-            }
-        }
+        val decompressedDisk = readInput(input)
 
         val compressedDisk = mutableListOf<DiskSlot>()
-
         while (decompressedDisk.isNotEmpty()) {
             val current = decompressedDisk.removeFirst()
             if (current is File) {
@@ -53,16 +43,7 @@ class Day09 : AbstractDailyPuzzle() {
     }
 
     override fun part2(input: List<String>): String {
-        val diskMap = input.first().toCharArray()
-        val disk = ArrayDeque<DiskSlot>()
-
-        diskMap.forEachIndexed() { i, value ->
-            if (i % 2 == 0) {
-                disk.addLast(File(value.digitToInt(), i / 2))
-            } else {
-                disk.addLast(EmptySpace(value.digitToInt()))
-            }
-        }
+        val disk = readInput(input)
 
         var attemptToMoveIndex = disk.size - 1
         while (attemptToMoveIndex > 0) {
@@ -96,6 +77,20 @@ class Day09 : AbstractDailyPuzzle() {
             }
 
         return sum.toString()
+    }
+
+    private fun readInput(input: List<String>): ArrayDeque<DiskSlot> {
+        val diskMap = input.first().toCharArray()
+        val decompressedDisk = ArrayDeque<DiskSlot>()
+
+        diskMap.forEachIndexed() { i, value ->
+            if (i % 2 == 0) {
+                decompressedDisk.addLast(File(value.digitToInt(), i / 2))
+            } else {
+                decompressedDisk.addLast(EmptySpace(value.digitToInt()))
+            }
+        }
+        return decompressedDisk
     }
 
 }
