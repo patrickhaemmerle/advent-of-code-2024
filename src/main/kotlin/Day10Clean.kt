@@ -1,4 +1,6 @@
-import util.maze.*
+import util.DIRECTION_ORTHOGONALS
+import util.IntMazeCellInitializer
+import util.Maze
 
 fun main() = Day10Clean().run()
 
