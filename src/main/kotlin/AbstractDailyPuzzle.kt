@@ -1,4 +1,5 @@
 import java.io.File
+import kotlin.time.measureTime
 
 abstract class AbstractDailyPuzzle {
 
@@ -19,10 +20,13 @@ abstract class AbstractDailyPuzzle {
         println("-".repeat(80))
 
         val input = File("${inputDir.path}/input.txt")
-        println("Solution to part1 is: ${part1(input.readLines())}")
-        println("Solution to part2 is: ${part2(input.readLines())}")
+        val executionTime = measureTime {
+            println("Solution to part1 is: ${part1(input.readLines())}")
+            println("Solution to part2 is: ${part2(input.readLines())}")
+        }
 
         println("-".repeat(80))
+        println(executionTime)
     }
 
     abstract fun part1(input: List<String>): String
