@@ -1,3 +1,6 @@
+import util.Matrix
+import util.MatrixCell
+
 fun main() = Day14().run()
 
 class Day14 : AbstractDailyPuzzle() {
@@ -41,16 +44,13 @@ class Day14 : AbstractDailyPuzzle() {
         var newPos: List<Robot> = robots
         var steps = 0
         for (i in 0 until 10000) {
-            val matrix = Array(dimensions.second.toInt()) { Array(dimensions.first.toInt()) { 0 } }
+            val matrix = Matrix.emptyMatrix(dimensions.second.toInt(), dimensions.first.toInt(), ' ')
             newPos.forEach {
-                matrix[it.y][it.x]++
+                matrix.setValueAt(it.y, it.x, '#')
             }
-            if (matrix.flatMap { it.distinct() }.distinct().size < 3) {
-                // This was just a bet :-) having max one robot per cell does not have to work, but it did with my
-                // input. Alternatives include finding multiple neighbouring cells with min one robot. But there was
-                // definitely some guesswork involved, because there's no description what a Christmas tree looks like.
+            if (matrix.toString().contains("###########")) {
                 println("-------------------------------------------------------------------------------------------------")
-                println(matrix.map { it.joinToString("") { if (it == 0) " " else it.toString() } }.joinToString("\n"))
+                println(matrix.toString())
                 steps = i
                 break
             }

@@ -76,6 +76,6 @@ class Day12WithMatrix : AbstractDailyPuzzle() {
         matrix.adjacentOrNull(cell, d1)?.value != cell.value && matrix.adjacentOrNull(cell, d2)?.value != cell.value
 
     private fun readInput(input: List<String>): Matrix<Char> =
-        Matrix.of(input, CharMatrixCellInitializer())
+        Matrix.of(input, CharMatrixCellTransformer())
 
 }

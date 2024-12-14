@@ -22,19 +22,38 @@ class Matrix<T> private constructor(
     fun allAdjacentCells(from: MatrixCell<T>, directions: Set<Direction>): List<MatrixCell<T>> =
         directions.mapNotNull { adjacentOrNull(from, it) }
 
+    fun updateValueAt(i: Int, j: Int, updateFunction: (old: T) -> T) {
+        checkOnMatrix(i, j)
+        matrix[i][j] = MatrixCell(i, j, updateFunction(cellAt(i, j).value))
+    }
+
+    fun setValueAt(i: Int, j: Int, newValue: T) {
+        checkOnMatrix(i, j)
+        matrix[i][j] = MatrixCell(i, j, newValue)
+    }
+
+    override fun toString(): String {
+        return matrix.joinToString("\n") { row -> row.joinToString("") { it.toString() } }
+    }
+
+    private fun checkOnMatrix(i: Int, j: Int) = check(isOnMatrix(i, j)) { "($i,$j) is not on the matrix" }
+
     companion object {
         fun <T> of(
             input: List<String>,
-            matrixCellInitializer: MatrixCellInitializer<T>,
+            matrixCellTransformer: MatrixCellTransformer<T>,
         ): Matrix<T> {
             check(input.map { it.length }.distinct().size == 1) { "Not all lines in the input have the same length" }
             val matrix = input.mapIndexed { i, line ->
                 line.toCharArray().mapIndexed { j, char ->
-                    MatrixCell(i, j, matrixCellInitializer.toCellValue(char))
+                    MatrixCell(i, j, matrixCellTransformer.toCellValue(char))
                 }.toTypedArray()
             }.toTypedArray()
             return Matrix(matrix)
         }
+
+        fun <T> emptyMatrix(i: Int, j: Int, initialValue: T) =
+            Matrix(Array(i) { Array(j) { MatrixCell(i, j, initialValue) } })
     }
 }
 
@@ -42,17 +61,21 @@ class MatrixCell<T>(
     val i: Int,
     val j: Int,
     val value: T,
-)
+) {
+    override fun toString(): String {
+        return value.toString()
+    }
+}
 
-interface MatrixCellInitializer<T> {
+interface MatrixCellTransformer<T> {
     fun toCellValue(char: Char): T
 }
 
-class CharMatrixCellInitializer : MatrixCellInitializer<Char> {
+class CharMatrixCellTransformer : MatrixCellTransformer<Char> {
     override fun toCellValue(char: Char): Char = char
 }
 
-class IntMatrixCellInitializer : MatrixCellInitializer<Int> {
+class IntMatrixCellTransformer : MatrixCellTransformer<Int> {
     override fun toCellValue(char: Char): Int = char.digitToInt()
 }
 
