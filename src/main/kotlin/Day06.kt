@@ -1,3 +1,5 @@
+import util.Direction
+
 fun main() = Day06().run()
 
 class Day06 : AbstractDailyPuzzle() {
@@ -76,6 +78,7 @@ class Day06 : AbstractDailyPuzzle() {
         Direction.EAST -> Direction.SOUTH
         Direction.SOUTH -> Direction.WEST
         Direction.WEST -> Direction.NORTH
+        else -> error("$current is invalid anyways")
     }
 
     private fun findStartingPosition(
@@ -99,14 +102,3 @@ data class Position(
     val i: Int,
     val j: Int,
 )
-
-enum class Direction(
-    val i: Int,
-    val j: Int
-) {
-    NORTH(-1, 0),
-    EAST(0, 1),
-    WEST(0, -1),
-    SOUTH(1, 0),
-    ;
-}
