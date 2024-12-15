@@ -27,10 +27,14 @@ class Matrix<T> private constructor(
         matrix[i][j] = MatrixCell(i, j, updateFunction(cellAt(i, j).value))
     }
 
-    fun setValueAt(i: Int, j: Int, newValue: T) {
+    fun setValueAt(i: Int, j: Int, newValue: T): MatrixCell<T> {
         checkOnMatrix(i, j)
-        matrix[i][j] = MatrixCell(i, j, newValue)
+        val newCell = MatrixCell(i, j, newValue)
+        matrix[i][j] = newCell
+        return newCell
     }
+
+    fun copy(): Matrix<T> = Matrix(matrix.map { it.clone() }.toTypedArray())
 
     override fun toString(): String {
         return matrix.joinToString("\n") { row -> row.joinToString("") { it.toString() } }

@@ -1,5 +1,4 @@
 import util.Matrix
-import util.MatrixCell
 
 fun main() = Day14().run()
 
