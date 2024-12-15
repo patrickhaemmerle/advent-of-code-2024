@@ -121,6 +121,8 @@ class Day15 : AbstractDailyPuzzle() {
                 else -> error("")
             }
             nextCandidates.forEach {
+                // We need to use the newMatrix here, otherwhise we would not recognize if the box was already moved
+                // away by a neighbor (when they are overlapping)
                 val next = newMatrix.adjacentOrNull(cell, it)!!
                 if (next.value == cell.value) {
                     move2Recursive(direction, next, matrix, newMatrix)
