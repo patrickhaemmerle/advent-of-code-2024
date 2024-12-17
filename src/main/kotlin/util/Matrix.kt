@@ -47,7 +47,7 @@ class Matrix<T> private constructor(
             input: List<String>,
             matrixCellTransformer: MatrixCellTransformer<T>,
         ): Matrix<T> {
-            check(input.map { it.length }.distinct().size == 1) { "Not all lines in the input have the same length" }
+            check(input.map { it.length }.distinct().size <= 1) { "Not all lines in the input have the same length" }
             val matrix = input.mapIndexed { i, line ->
                 line.toCharArray().mapIndexed { j, char ->
                     MatrixCell(i, j, matrixCellTransformer.toCellValue(char))
