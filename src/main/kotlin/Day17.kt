@@ -10,56 +10,24 @@ class Day17 : AbstractDailyPuzzle() {
     }
 
     override fun part2(input: List<String>): String {
-        // For some not yet known reasons... two implementations of Computer do not yield the desired result
-        // With both implementations, there is no way to make it spit out a 5, but there are two ways to get a 4
-
-        // The first who finds the issue with this code is eligible to get a free beer from me :-D
-
-        println("-".repeat(80))
-        (0L .. 7).forEach {
-            println("output ${execute(input, it)} -> input $it")
-        }
-        println("-".repeat(80))
         val computer = readInput(input)
-        (0L .. 7).forEach {
-            val result = Computer(computer.register.copy(A=it), computer.program).execute()
-            println("output $result -> input $it")
-        }
-        println("-".repeat(80))
-        return execute(input)
-    }
+        val expectedOutput = computer.program.joinToString(",")
 
-    private fun execute(input: List<String>, aOverride: Long? = null): String {
-        var a = aOverride ?: input.single { it.startsWith("Register A:") }.split(":")[1].trim().toLong()
-        var b = input.single { it.startsWith("Register B:") }.split(":")[1].trim().toLong()
-        var c = input.single { it.startsWith("Register C:") }.split(":")[1].trim().toLong()
-        val program = input.single { it.startsWith("Program:") }.split(":")[1].trim().split(",").map { it.toInt() }
-        val output = mutableListOf<Int>()
+        fun solve(position: Int = computer.program.size - 1): List<Long> {
+            if (position < 0) return listOf(0L)
 
-        fun resolveCombo(operand: Int): Long {
-            return when (operand) {
-                4 -> a
-                5 -> b
-                6 -> c
-                else -> operand.toLong()
+            val downStreamOutput = solve(position - 1)
+            return (0..7).flatMap { threeBit ->
+                downStreamOutput.mapNotNull { a ->
+                    val candidate = a * 8 + threeBit
+                    val output = Computer(computer.register.copy(A = candidate), computer.program).execute()
+                    if (expectedOutput.substring(expectedOutput.length - position * 2 - 1) == output) candidate else null
+                }
             }
         }
 
-        var pos = 0
-        while (pos < program.size) {
-            when (program[pos]) {
-                0 -> a = a / 2.0.pow(resolveCombo(program[pos + 1]).toDouble()).toLong()
-                1 -> b = b xor program[pos + 1].toLong()
-                2 -> b = resolveCombo(program[pos + 1]) % 8
-                3 -> if (a != 0L) pos = program[pos + 1] - 2
-                4 -> b = b xor c
-                5 -> output.add((resolveCombo(program[pos+1]) % 8).toInt())
-                6 -> b = a / 2.0.pow(resolveCombo(program[pos + 1]).toDouble()).toLong()
-                7 -> c = a / 2.0.pow(resolveCombo(program[pos + 1]).toDouble()).toLong()
-            }
-            pos += 2
-        }
-        return output.joinToString(",")
+        val result = solve()
+        return result.min().toString()
     }
 
     private fun readInput(input: List<String>): Computer {
