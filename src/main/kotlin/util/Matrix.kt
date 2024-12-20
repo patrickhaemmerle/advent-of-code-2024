@@ -37,7 +37,7 @@ class Matrix<T> private constructor(
     fun copy(): Matrix<T> = Matrix(matrix.map { it.clone() }.toTypedArray())
 
     override fun toString(): String {
-        return matrix.joinToString("\n") { row -> row.joinToString("") { it.toString() } }
+        return matrix.joinToString("\n") { row -> row.joinToString("") { it.toValueString() } }
     }
 
     private fun checkOnMatrix(i: Int, j: Int) = check(isOnMatrix(i, j)) { "($i,$j) is not on the matrix" }
@@ -56,8 +56,11 @@ class Matrix<T> private constructor(
             return Matrix(matrix)
         }
 
-        fun <T> emptyMatrix(i: Int, j: Int, initialValue: T) =
-            Matrix(Array(i) { Array(j) { MatrixCell(i, j, initialValue) } })
+        fun <T> emptyMatrix(height: Int, width: Int, initialValue: T): Matrix<T> {
+            val matrix = Matrix(Array(height) { Array(width) { MatrixCell(-1, -1, initialValue) } })
+            for (i in 0 until matrix.height) for (j in 0 until matrix.width) matrix.setValueAt(i, j, initialValue)
+            return matrix
+        }
     }
 }
 
@@ -66,8 +69,12 @@ class MatrixCell<T>(
     val j: Int,
     val value: T,
 ) {
-    override fun toString(): String {
+    fun toValueString(): String {
         return value.toString()
+    }
+
+    override fun toString(): String {
+        return "($i, $j) $value"
     }
 }
 
