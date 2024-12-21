@@ -12,8 +12,13 @@ abstract class AbstractDailyPuzzle {
 
         val testInput1 = File("${inputDir.path}/testinput1.txt")
         val testInput2 = File("${inputDir.path}/testinput2.txt")
-        println("Solution to part1 is: ${part1(testInput1.readLines())}")
-        println("Solution to part2 is: ${part2(testInput2.readLines())}")
+        val executionTimeTest = measureTime {
+            println("Solution to part1 is: ${part1(testInput1.readLines())}")
+            println("Solution to part2 is: ${part2(testInput2.readLines())}")
+        }
+        println("-".repeat(80))
+        println(executionTimeTest)
+        println("-".repeat(80))
 
         println("-".repeat(80))
         println("Running AoC for ${this.javaClass.name}")
@@ -24,7 +29,6 @@ abstract class AbstractDailyPuzzle {
             println("Solution to part1 is: ${part1(input.readLines())}")
             println("Solution to part2 is: ${part2(input.readLines())}")
         }
-
         println("-".repeat(80))
         println(executionTime)
     }
